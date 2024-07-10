@@ -9,6 +9,7 @@ import { router } from './routes'
 import authStore from './stores/AuthStore'
 const App = observer(() => {
     authStore.isLoggedIn()
+
     return <RouterProvider router={router} />
 })
 export default App

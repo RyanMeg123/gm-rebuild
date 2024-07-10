@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RedisService } from 'src/redis/redis.service';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { RegisterUserDto } from './dto/register-user.dot';
 import { User } from './entities/user.entity';
 import { md5 } from '../utils/md5';
@@ -18,6 +18,8 @@ import { LoginUserVo } from './vo/login-user.vo';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { EmailService } from 'src/email/email.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserInfo } from 'src/custom.decorator';
+import { cleanConditions } from 'src/utils/tool';
 
 @Injectable()
 export class UserService {
@@ -77,8 +79,45 @@ export class UserService {
       return '注册失败！';
     }
   }
-  getUserList(): Promise<User[]> {
-    return this.userRepository.find();
+  async getUserList(
+    pageNumber: number,
+    pageSize: number,
+    username: string,
+    nickName: string,
+    email: string,
+  ) {
+    const skipCount = (pageNumber - 1) * pageSize;
+    const condition: Record<string, any> = {};
+
+    if (username) {
+      condition.username = Like(`%${username}%`);
+    }
+    if (nickName) {
+      condition.nickname = Like(`%${nickName}%`);
+    }
+
+    if (email) {
+      condition.email = Like(`%${email}%`);
+    }
+    const [users, totalCount] = await this.userRepository.findAndCount({
+      skip: skipCount,
+      take: pageSize,
+      select: [
+        'id',
+        'username',
+        'nickname',
+        'email',
+        'phoneNumber',
+        'isFrozen',
+        'headPic',
+        'createTime',
+      ],
+      where: condition,
+    });
+    return {
+      users,
+      totalCount,
+    };
   }
 
   // 初始化
@@ -251,6 +290,7 @@ export class UserService {
       default:
         redisKey = `update_user_captcha_${address}`;
     }
+    console.log(redisKey, 'redisKey');
     const code = Math.random().toString().slice(2, 8);
     await this.redisService.set(redisKey, code, 60 * 5);
     try {
@@ -261,6 +301,7 @@ export class UserService {
       });
       return '发送成功';
     } catch (e) {
+      console.log(e, 'e');
       return '发送失败';
     }
   }
@@ -288,6 +329,26 @@ export class UserService {
     if (updateUserDto.headPic) {
       user.headPic = updateUserDto.headPic;
     }
+    try {
+      await this.userRepository.save(user);
+      return '修改成功！';
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return '修改失败！';
+    }
+  }
+
+  async freezeUser(userId: number | undefined) {
+    // 过滤id=undefiend
+    if (userId === undefined) {
+      console.log('Invalid ID');
+      throw new HttpException('error', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    console.log(user, 'whay');
+    user.isFrozen = !user.isFrozen;
     try {
       await this.userRepository.save(user);
       return '修改成功！';

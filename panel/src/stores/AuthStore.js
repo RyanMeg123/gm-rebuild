@@ -2,6 +2,7 @@
 
 import { makeAutoObservable } from 'mobx'
 import { getLoginToken, isVaildToken } from '../utils/tool'
+import { refreshToken } from '../interfaces/interfaces'
 
 class AuthStore {
     isAuthenticated = false
@@ -12,10 +13,24 @@ class AuthStore {
 
     isLoggedIn() {
         const token = getLoginToken()
-        console.log(token, 'sdsdfs')
-        const isExpri = isVaildToken(token)
-        console.log(isExpri, 'idsds')
-        this.isAuthenticated = isExpri
+        console.log(token, 'sdsdfseeee')
+        if (token == 'undefined') {
+            this.isAuthenticated = false
+        } else {
+            const isExpri = !token ? false : isVaildToken(token)
+            console.log(isExpri, 'idsds')
+            this.isAuthenticated = isExpri
+            if (!isExpri) {
+                this.loginRefreshToken()
+            }
+        }
+    }
+
+    async loginRefreshToken() {
+        if (!this.isAuthenticated) {
+            const res = await refreshToken()
+            console.log(res, 'resresresres')
+        }
     }
 
     login() {

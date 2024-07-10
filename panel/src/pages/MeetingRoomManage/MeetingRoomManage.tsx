@@ -138,28 +138,30 @@ export function MeetingRoomManage() {
             pageSize
         )
 
-        // const { data } = res.data;
-        // if(res.status === 201 || res.status === 200) {
-        //     setMeetingRoomResult(data.meetingRooms.map((item: MeetingRoomSearchResult) => {
-        //         return {
-        //             key: item.id,
-        //             ...item
-        //         }
-        //     }))
-        // } else {
-        //     message.error(data || '系统繁忙，请稍后再试');
-        // }
+        const { data } = res.data
+        if (res.status === 201 || res.status === 200) {
+            setMeetingRoomResult(
+                data.meetingRooms.map((item: MeetingRoomSearchResult) => {
+                    return {
+                        key: item.id,
+                        ...item,
+                    }
+                })
+            )
+        } else {
+            message.error(data || '系统繁忙，请稍后再试')
+        }
     }, [])
 
     const [form] = useForm()
 
-    // useEffect(() => {
-    //     searchMeetingRoom({
-    //         name: form.getFieldValue('name'),
-    //         capacity: form.getFieldValue('capacity'),
-    //         equipment: form.getFieldValue('equipment'),
-    //     })
-    // }, [pageNo, pageSize, num])
+    useEffect(() => {
+        searchMeetingRoom({
+            name: form.getFieldValue('name'),
+            capacity: form.getFieldValue('capacity'),
+            equipment: form.getFieldValue('equipment'),
+        })
+    }, [pageNo, pageSize, num])
 
     const changePage = useCallback(function (pageNo: number, pageSize: number) {
         setPageNo(pageNo)

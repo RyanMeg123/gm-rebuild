@@ -23,38 +23,38 @@ axiosInstance.interceptors.request.use(function (config) {
     return config
 })
 
-axiosInstance.interceptors.response.use(
-    (response) => {
-        return response
-    },
-    async (error) => {
-        if (!error.response) {
-            return Promise.reject(error)
-        }
-        let { data, config } = error.response
+// axiosInstance.interceptors.response.use(
+//     (response) => {
+//         return response
+//     },
+//     async (error) => {
+//         if (!error.response) {
+//             return Promise.reject(error)
+//         }
+//         let { data, config } = error.response
 
-        if (data.code === 401 && !config.url.includes('/user/admin/refresh')) {
-            const res = await refreshToken()
+//         if (data.code === 401 && !config.url.includes('/user/admin/refresh')) {
+//             const res = await refreshToken()
 
-            if (res.status === 200) {
-                return axiosInstance(config)
-            } else {
-                message.error(res.data)
+//             if (res.status === 200) {
+//                 return axiosInstance(config)
+//             } else {
+//                 message.error(res.data)
 
-                setTimeout(() => {
-                    window.location.href = '/login'
-                }, 1500)
-            }
-        } else {
-            return error.response
-        }
-    }
-)
+//                 setTimeout(() => {
+//                     window.location.href = '/login'
+//                 }, 1500)
+//             }
+//         } else {
+//             return error.response
+//         }
+//     }
+// )
 
-async function refreshToken() {
+export async function refreshToken() {
     const res = await axiosInstance.get('/user/admin/refresh', {
         params: {
-            refresh_token: localStorage.getItem('refresh_token'),
+            refreshToken: localStorage.getItem('refresh_token'),
         },
     })
     localStorage.setItem('access_token', res.data.access_token)
@@ -103,8 +103,8 @@ export async function updateInfo(data: UserInfo) {
     return await axiosInstance.post('/user/admin/update', data)
 }
 
-export async function updateUserInfoCaptcha() {
-    return await axiosInstance.get('/user/update/captcha')
+export async function updateUserInfoCaptcha(params: any) {
+    return await axiosInstance.get('/user/update/captcha', params)
 }
 
 export async function updatePasswordCaptcha(email: string) {
