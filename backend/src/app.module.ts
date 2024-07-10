@@ -17,6 +17,7 @@ import { MeetingRoomModule } from './meeting-room/meeting-room.module';
 import { MeetingRoom } from './meeting-room/entities/meeting-room.entity';
 import { BookingModule } from './booking/booking.module';
 import { Booking } from './booking/entities/booking.entity';
+import * as path from 'path';
 
 @Module({
   imports: [
@@ -40,10 +41,10 @@ import { Booking } from './booking/entities/booking.entity';
           port: configService.get('mysql_server_port'),
           username: configService.get('mysql_server_username'),
           password: configService.get('mysql_server_password'),
-          logging: false,
+          logging: true,
           database: configService.get('mysql_server_database'),
           entities: [User, Role, Permission, MeetingRoom, Booking],
-          synchronize: true,
+          synchronize: false,
           connectorPackage: 'mysql2',
           extra: {
             authPlugin: 'sha256_password',
@@ -54,7 +55,11 @@ import { Booking } from './booking/entities/booking.entity';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'src/.env',
+      envFilePath: [
+        // path.join(__dirname, '.dev.env'),
+
+        path.join(__dirname, '.env'),
+      ],
     }),
     UserModule,
     RedisModule,
@@ -75,4 +80,8 @@ import { Booking } from './booking/entities/booking.entity';
     },
   ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log(process.env.NODE_ENV, 'process.env.NODE_ENV');
+  }
+}
