@@ -1,0 +1,88 @@
+/** @format */
+
+.searchContent {
+    display: flex;
+    flex: 1;
+    background: #fff;
+    padding: 30px 20px;
+    border-radius: 10px;
+}
+.tableContent {
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    margin-top: 10px;
+    flex-direction: column;
+    padding: 20px;
+}
+.componentWidth {
+    width: 100%;
+}
+.red {
+    background-color: red;
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    margin-right: 2px;
+}
+.green {
+    background-color: green;
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    margin-right: 2px;
+}
+.gray {
+    background-color: gray;
+    height: 7px;
+    width: 7px;
+    border-radius: 50%;
+    margin-right: 2px;
+}
+.flexRowCenter {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.backgroundMask {
+    background-color: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+}
+
+.openGreen {
+    background-color: #f6ffec;
+    border: 1px solid #b7ea8f;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 12px;
+    color: #52c41a;
+    line-height: 35px;
+    margin-top: 5px;
+}
+
+.openRed {
+    background-color: #fff1e8;
+    border: 1px solid #ffbb96;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 12px;
+    color: #f9541c;
+    line-height: 35px;
+    margin-top: 5px;
+}
+.openGray {
+    background-color: #f2f2f2;
+    border: 1px solid #d7d7d7;
+    border-radius: 6px;
+    width: 100%;
+    font-size: 12px;
+    color: #bdbdbd;
+    line-height: 35px;
+    margin-top: 5px;
+}

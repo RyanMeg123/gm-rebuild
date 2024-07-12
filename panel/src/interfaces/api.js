@@ -10,3 +10,7 @@ export const updateUserInfoCaptcha = (params) =>
 export const freeze = (params) => {
     return post('/user/freeze', params)
 }
+
+export const getServerList = (params) => {
+    return get('/servers/list', params)
+}

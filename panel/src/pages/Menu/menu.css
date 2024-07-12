@@ -1,7 +1,14 @@
+/** @format */
+
 #menu-container {
     display: flex;
     flex-direction: row;
 }
 #menu-container .menu-area {
     width: 200px;
+}
+#menu-container .content-area {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
 }

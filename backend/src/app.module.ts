@@ -17,7 +17,9 @@ import { MeetingRoomModule } from './meeting-room/meeting-room.module';
 import { MeetingRoom } from './meeting-room/entities/meeting-room.entity';
 import { BookingModule } from './booking/booking.module';
 import { Booking } from './booking/entities/booking.entity';
+import { ServersModule } from './servers/servers.module';
 import * as path from 'path';
+import { ServerList } from './servers/entities/serverList.entity';
 
 @Module({
   imports: [
@@ -43,8 +45,8 @@ import * as path from 'path';
           password: configService.get('mysql_server_password'),
           logging: true,
           database: configService.get('mysql_server_database'),
-          entities: [User, Role, Permission, MeetingRoom, Booking],
-          synchronize: false,
+          entities: [User, Role, Permission, MeetingRoom, Booking, ServerList],
+          synchronize: true,
           connectorPackage: 'mysql2',
           extra: {
             authPlugin: 'sha256_password',
@@ -56,7 +58,7 @@ import * as path from 'path';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
-        // path.join(__dirname, '.dev.env'),
+        path.join(__dirname, '.dev.env'),
 
         path.join(__dirname, '.env'),
       ],
@@ -66,6 +68,7 @@ import * as path from 'path';
     EmailModule,
     MeetingRoomModule,
     BookingModule,
+    ServersModule,
   ],
   controllers: [AppController],
   providers: [

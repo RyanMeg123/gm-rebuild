@@ -3,10 +3,25 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { Menu as AntdMenu, MenuProps } from 'antd'
 import './menu.css'
+import { observer } from 'mobx-react'
 import { MenuClickEventHandler } from 'rc-menu/lib/interface'
 import { router } from '../../routes'
+import { ConsoleSqlOutlined, SpotifyOutlined } from '@ant-design/icons'
+import { useEffect, useRef, useState } from 'react'
+import toolStore from '../../stores/ToolStore'
 
 const items: MenuProps['items'] = [
+    {
+        key: 'sub1',
+        label: '服务器管理',
+        icon: <SpotifyOutlined />,
+        children: [
+            {
+                key: 'server_list',
+                label: '服务器列表',
+            },
+        ],
+    },
     {
         key: '1',
         label: '会议室管理',
@@ -25,48 +40,58 @@ const items: MenuProps['items'] = [
     },
 ]
 
-const handleMenuItemClick: MenuClickEventHandler = (info) => {
-    let path = ''
-    switch (info.key) {
-        case '1':
-            path = '/meeting_room_manage'
-            break
-        case '2':
-            path = '/booking_manage'
-            break
-        case '3':
-            path = '/user_manage'
-            break
-        case '4':
-            path = '/statistics'
-            break
-    }
-    router.navigate(path)
-}
-
-export function Menu() {
+export const Menu = observer(() => {
     const location = useLocation()
-
-    function getSelectedKeys() {
-        if (location.pathname === '/user_manage') {
-            return ['3']
-        } else if (location.pathname === '/booking_manage') {
-            return ['2']
-        } else if (location.pathname === '/meeting_room_manage') {
-            return ['1']
-        } else if (location.pathname === '/statistics') {
-            return ['4']
-        } else {
-            return ['1']
+    const [collapsed, setCollapsed] = useState(false)
+    const [openKeys, setOpenKeys] = useState<string[]>([])
+    const prevLocationRef = useRef<string>()
+    const handleMenuItemClick: MenuClickEventHandler = (info) => {
+        console.log(info, 'infoinfoinfo')
+        localStorage.setItem('selected_key', info.key)
+        localStorage.setItem('open_key', info.keyPath[info.keyPath.length - 1])
+        let path = ''
+        switch (info.key) {
+            case '1':
+                path = '/meeting_room_manage'
+                break
+            case '2':
+                path = '/booking_manage'
+                break
+            case '3':
+                path = '/user_manage'
+                break
+            case '4':
+                path = '/statistics'
+                break
+            case 'server_list':
+                path = '/server_manager/list'
+                break
         }
+        router.navigate(path)
     }
+
+    useEffect(() => {
+        const pathSnippets = location.pathname.split('/').filter((i) => i)
+        const openPath = pathSnippets.length ? [`/${pathSnippets[0]}`] : []
+        setOpenKeys(openPath)
+    }, [location])
+    useEffect(() => {
+        console.log(toolStore.getCurrentSelectedKey(), 'dddddd')
+        console.log(
+            toolStore.currentSelectedKey,
+            'toolStore.currentSelectedKey'
+        )
+    }, [])
 
     return (
         <div id="menu-container">
             <div className="menu-area">
                 <AntdMenu
-                    defaultSelectedKeys={getSelectedKeys()}
+                    defaultSelectedKeys={toolStore.getCurrentSelectedKey()}
+                    defaultOpenKeys={toolStore.getCurrentOpenKey()}
                     items={items}
+                    mode="inline"
+                    inlineCollapsed={collapsed}
                     onClick={handleMenuItemClick}
                 />
             </div>
@@ -75,4 +100,4 @@ export function Menu() {
             </div>
         </div>
     )
-}
+})

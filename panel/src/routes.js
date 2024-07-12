@@ -17,6 +17,7 @@ import {
     Outlet,
 } from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
+import { ServerList } from './pages/ServerManager/ServerList'
 
 const routes = [
     {
@@ -51,6 +52,15 @@ const routes = [
                     {
                         path: 'statistics',
                         element: <Statistics />,
+                    },
+                    {
+                        path: 'server_manager',
+                        children: [
+                            {
+                                path: 'list',
+                                element: <ServerList></ServerList>,
+                            },
+                        ],
                     },
                 ],
             },
